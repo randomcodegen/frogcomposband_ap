@@ -3313,6 +3313,7 @@ menu_naiyou menu_info[10][10] =
         {"Uninscribe an item(})", '}', TRUE},
         {"Inspect an item(I)", 'I', TRUE},
         {"Inventory list(i)", 'i', TRUE},
+		{"Transfer item to home(h)", 'h', TRUE},
         {"Travel to item(H/^E)", 'H', TRUE},
         {"Resume travel(J/())", 'J', TRUE},
         {"", 0, FALSE}

@@ -2406,6 +2406,15 @@ option_type option_info[] =
 //	{ &coffee_break,		FALSE, OPT_PAGE_BIRTH, 6, 3,
 //	"coffee_break",			"Coffee-break mode (accelerated game) (*)" },
 
+	// [ap] Added Coffee Break Wilderness Option
+	{ &coffee_wilderness,			FALSE, OPT_PAGE_BIRTH, 7, 13,
+	"coffee_wilderness",			"Coffee Wilderness (*)" },
+	// [ap] Added Coffee Break Upstairs Option
+	{ &coffee_upstairs,			FALSE, OPT_PAGE_BIRTH, 7, 14,
+	"coffee_upstairs",			"Coffee Upstairs (*)" },
+	// [ap] Added Coffee Break Disable Quest Warp Option
+	{ &coffee_disablequestwarp,			FALSE, OPT_PAGE_BIRTH, 7, 15,
+	"coffee_disablequestwarp",			"Coffee Disable Quest Warp (*)" },
 	{ &easy_id,			FALSE, OPT_PAGE_BIRTH, 6, 31,
 	"easy_id",			"Easy Identify (*)" },
 	

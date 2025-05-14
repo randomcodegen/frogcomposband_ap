@@ -3375,7 +3375,8 @@ static void _birth_finalize(void)
 
     if (coffee_break)
     {
-        no_wilderness = TRUE;
+        //[ap] added option to enable wilderness in coffe break mode
+        if (!coffee_wilderness) no_wilderness = TRUE;
         if (coffee_break == SPEED_INSTA_COFFEE)
         {
             thrall_mode = FALSE;

@@ -5227,7 +5227,9 @@ enum mon_save_fields_e {
      ((coffee_break) && (coffeebreak_recall_level(FALSE) == dun_level))) && \
       (dun_level >= 1) && only_downward()))
 
-#define only_downward() ((coffee_break) || (ironman_downward))
+//#define only_downward() ((coffee_break) || (ironman_downward))
+// [ap]
+#define only_downward() ((coffee_break && !coffee_upstairs) || (ironman_downward))
 
 /*
  * Max numbers of macro trigger names

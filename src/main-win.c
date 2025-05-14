@@ -3855,7 +3855,9 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
                     /* Hide sub-windows */
                     for (i = 1; i < MAX_TERM_DATA; i++)
                     {
-                        if (data[i].visible) ShowWindow(data[i].w, SW_HIDE);
+                        //[ap]
+                        //if (data[i].visible) ShowWindow(data[i].w, SW_HIDE);
+						if (data[i].visible) ShowWindow(data[i].w, SW_SHOW);
                     }
                     return 0;
                 }
@@ -3972,7 +3974,9 @@ LRESULT FAR PASCAL AngbandWndProc(HWND hWnd, UINT uMsg,
                     }
                     else
                     {
-                        ShowWindow(data[i].w, SW_HIDE);
+                        //[ap]
+                    	//ShowWindow(data[i].w, SW_HIDE);
+					  	ShowWindow(data[i].w, SW_SHOW);
                     }
                 }
             }

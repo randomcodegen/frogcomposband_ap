@@ -2541,6 +2541,15 @@ static void _build_options(doc_ptr doc)
 	if (easy_id)
 		doc_printf(doc, " Easy Identify:      On\n");
 	
+	if (coffee_upstairs)
+		doc_printf(doc, " Coffee Upstairs:    On\n");
+	
+	if (coffee_wilderness)
+		doc_printf(doc, " Coffee Wilderness:  On\n");
+	
+	if (coffee_disablequestwarp)
+		doc_printf(doc, " Coffee Disable Quest Warp:  On\n");
+	
 	if (easy_lore)
 		doc_printf(doc, " Easy Lore:          On\n");
 

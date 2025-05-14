@@ -228,7 +228,9 @@ static bool alloc_stairs(int feat, int num, int walls)
         /*&& quests_allow_downshaft()*/)
         {
             shaft_num = (randint1(num)+1)/2;
-            if ((d_info[dungeon_type].flags1 & DF1_ALL_SHAFTS) || (coffee_break)) shaft_num = num;
+            //if ((d_info[dungeon_type].flags1 & DF1_ALL_SHAFTS) || (coffee_break)) shaft_num = num;
+			//coffee upstairs mode stops forcing shafts 
+            if ((d_info[dungeon_type].flags1 & DF1_ALL_SHAFTS) || (coffee_break && !coffee_upstairs)) shaft_num = num;
         }
     }
 

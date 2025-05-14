@@ -355,6 +355,9 @@ bool alert_poison;   /* Alert on high poisoning */
 
 /*** Birth Options ***/
 
+bool coffee_upstairs;	 /* Easy option for Coffeebreak */
+bool coffee_wilderness; /* Enable Wilderness in Coffeebreak */
+bool coffee_disablequestwarp; /* Disable Quest Warp in Instant-Coffeebreak */
 byte coffee_break;   /* Coffee-break mode */
 bool easy_id;        /* Easy Identify */
 bool easy_lore;      /* Easy Monster Lore */

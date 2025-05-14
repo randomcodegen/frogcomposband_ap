@@ -1017,7 +1017,7 @@ byte coffeebreak_recall_level(bool laskuri)
     {
         taso++;
         if (!level_is_questlike(DUNGEON_ANGBAND, taso)) taso++;
-        if (coffee_break == SPEED_INSTA_COFFEE)
+        if ((coffee_break == SPEED_INSTA_COFFEE) && !coffee_disablequestwarp)
         {
             while (!level_is_questlike(DUNGEON_ANGBAND, taso))
             {
@@ -2673,8 +2673,10 @@ void process_world_aux_movement(void)
                 dun_level = max_dlv[dungeon_type];
                 if (dun_level < 1) dun_level = 1;
 
-                if (coffee_break) dun_level = coffeebreak_recall_level(TRUE);
-
+                //if (coffee_break) dun_level = coffeebreak_recall_level(TRUE);
+				//[ap]
+				if (coffee_break && !coffee_wilderness) dun_level = coffeebreak_recall_level(TRUE);
+				
                 /* Nightmare mode makes recall more dangerous */
                 if (ironman_nightmare && !randint0(666) && (dungeon_type == DUNGEON_ANGBAND))
                 {
@@ -3590,6 +3592,12 @@ static void _dispatch_command(int old_now_turn)
             if (!p_ptr->wild_mode) do_cmd_drop();
             break;
         }
+		/* [ap] Transfer item to home */
+		case 'h':
+		{
+			if (!p_ptr->wild_mode) do_cmd_hometransfer();
+            break;
+		}
 
         /* Destroy an item */
         case 'k':

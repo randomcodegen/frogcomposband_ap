@@ -3,7 +3,9 @@
 
 #include "inv.h"
 
-#define PACK_MAX 26
+//#define PACK_MAX 26
+// [ap] Define larger inventory to make room for live items
+#define PACK_MAX 52
 
 extern void    pack_init(void);
 

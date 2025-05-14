@@ -745,7 +745,7 @@ void teleport_level(int m_idx)
             if (!dun_level)
             {
                 dun_level = d_info[dungeon_type].mindepth;
-                if (coffee_break)
+                if (coffee_break && !coffee_wilderness)
                 {
                     dun_level = coffeebreak_recall_level(TRUE);
                     set_dungeon_type(DUNGEON_ANGBAND); /* paranoia */

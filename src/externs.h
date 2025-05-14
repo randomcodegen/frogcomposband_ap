@@ -387,6 +387,9 @@ extern bool alert_poison;       /* Alert on poisoning */
 
 /*** Birth Options ***/
 
+extern bool coffee_upstairs;	/* Easy modifier for Coffeebreak, allows upstairs */
+extern bool coffee_wilderness;	/* Allow wilderness in Coffeebreak mode */
+extern bool coffee_disablequestwarp; /* Disable Quest Warp in Instant-Coffeebreak mode */
 extern byte coffee_break;   /* Coffeebreak mode */
 extern bool easy_id;        /* Easy Identify */
 extern bool easy_lore;      /* Easy Monster Lore */
@@ -873,6 +876,8 @@ extern int breakage_chance(object_type *o_ptr);
 
 /* cmd3.c */
 extern void do_cmd_drop(void);
+//[ap]
+extern void do_cmd_hometransfer(void);
 extern bool high_level_book(object_type *o_ptr);
 extern void do_cmd_refill(void);
 extern void do_cmd_target(void);

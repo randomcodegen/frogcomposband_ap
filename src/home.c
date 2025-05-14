@@ -544,3 +544,94 @@ static void _remove(_ui_context_ptr context)
     }
 }
 
+/*
+ * [ap] Transfer items from inventory to home
+ */
+
+static void _drop_home_aux(obj_ptr obj)
+{
+    char name[MAX_NLEN];
+    if (object_is_(obj, TV_POTION, SV_POTION_BLOOD))
+    {
+        msg_print("The potion goes sour.");
+        obj->sval = SV_POTION_SALT_WATER;
+        obj->k_idx = lookup_kind(TV_POTION, SV_POTION_SALT_WATER);
+        object_origins(obj, ORIGIN_BLOOD);
+        obj->mitze_type = 0;
+    }
+    object_desc(name, obj, OD_COLOR_CODED);
+	msg_format("You transfer %s.", name);
+	home_carry(obj);
+    inv_sort(_home);
+}
+ 
+void do_cmd_hometransfer(void)
+{
+	obj_prompt_t prompt = {0};
+	int          amt = 1;
+    bool         new_id = FALSE;
+	
+	if (p_ptr->special_defense & KATA_MUSOU)
+        set_action(ACTION_NONE);
+
+    prompt.prompt = "Transfer which item to your home?";
+    prompt.error = "You have nothing to transfer.";
+	prompt.where[0] = INV_PACK;
+    prompt.where[1] = INV_EQUIP;
+    prompt.where[2] = INV_QUIVER;
+    obj_prompt_add_special_packs(&prompt);
+
+    obj_prompt(&prompt);
+    if (!prompt.obj) return;
+
+    energy_use = 0;
+	if (prompt.obj->loc.where == INV_EQUIP)
+    {
+        if (prompt.obj->tval == TV_QUIVER && quiver_count(NULL))
+        {
+            msg_print("Your quiver still holds ammo. Remove all the ammo from your quiver first.");
+            return;
+        }
+        if (!equip_can_takeoff(prompt.obj)) return;
+    }
+
+    amt = prompt.obj->number;
+
+    if (prompt.obj->number > 1)
+    {
+        if (!msg_input_num("Quantity", &amt, 1, prompt.obj->number)) return;
+    }
+
+    if (prompt.obj->loc.where == INV_EQUIP)
+    {
+        char name[MAX_NLEN];
+        object_desc(name, prompt.obj, OD_COLOR_CODED);
+        msg_format("You are no longer wearing %s.", name);
+        p_ptr->update |= PU_BONUS | PU_TORCH | PU_MANA;
+        p_ptr->redraw |= PR_EQUIPPY;
+        p_ptr->window |= PW_EQUIP;        
+    }
+
+    if (amt < prompt.obj->number)
+    {
+        obj_t copy = *prompt.obj;
+        copy.number = amt;
+        prompt.obj->number -= amt;
+        if (prompt.obj->insured)
+        {
+            copy.insured = 0;
+            if ((prompt.obj->insured % 100) > prompt.obj->number)
+            {
+                int vahennys = (prompt.obj->insured % 100) - prompt.obj->number;
+                copy.insured = prompt.obj->insured / 100 * 100 + vahennys;
+                obj_dec_insured(prompt.obj, vahennys);
+            }
+        }
+        _drop_home_aux(&copy);
+        if (new_id) autopick_alter_obj(prompt.obj, ((destroy_identify) && (obj_value(prompt.obj) < 1)));
+    }
+    else
+        _drop_home_aux(prompt.obj);
+
+    obj_release(prompt.obj, OBJ_RELEASE_QUIET);
+}
