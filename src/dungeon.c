@@ -2675,7 +2675,7 @@ void process_world_aux_movement(void)
 
                 //if (coffee_break) dun_level = coffeebreak_recall_level(TRUE);
 				//[ap]
-				if (coffee_break && !coffee_wilderness) dun_level = coffeebreak_recall_level(TRUE);
+				if (coffee_break && !coffee_wilderness && !coffee_upstairs) dun_level = coffeebreak_recall_level(TRUE);
 				
                 /* Nightmare mode makes recall more dangerous */
                 if (ironman_nightmare && !randint0(666) && (dungeon_type == DUNGEON_ANGBAND))
@@ -4110,6 +4110,16 @@ static void _dispatch_command(int old_now_turn)
                 {
                     do_cmd_aim_wand();
                 }
+            }
+            break;
+        }
+        
+        /* [ap] Added autoexplore key*/
+        case 'x':
+        {
+            if (!p_ptr->wild_mode)
+            {
+                do_cmd_explore();
             }
             break;
         }

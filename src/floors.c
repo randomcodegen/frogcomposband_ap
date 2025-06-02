@@ -999,12 +999,12 @@ void leave_floor(void)
             {
                 if (d_info[dungeon_type].flags1 & DF1_RANDOM)
                     move_num = rand_range(d_info[dungeon_type].mindepth, d_info[dungeon_type].maxdepth);
-                else if ((coffee_break) && (dungeon_type == DUNGEON_ANGBAND))
+                else if ((coffee_break) && (dungeon_type == DUNGEON_ANGBAND) && !coffee_wilderness && !coffee_upstairs)
                     move_num = coffeebreak_recall_level(TRUE);
                 else
                     move_num = d_info[dungeon_type].mindepth;
             }
-            else if (coffee_break == SPEED_INSTA_COFFEE)
+            else if (coffee_break == SPEED_INSTA_COFFEE && !coffee_wilderness && !coffee_upstairs)
             {
                 move_num = coffeebreak_recall_level(TRUE) - dun_level;
             }

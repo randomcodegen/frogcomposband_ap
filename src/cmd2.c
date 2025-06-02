@@ -3818,7 +3818,8 @@ static bool travel_flow_aux(int y, int x, int n, bool wall)
 
     /* Ignore out of bounds or undiscovered terrain */
     if (!in_bounds(y, x)) return wall;
-    if (!(c_ptr->info & CAVE_AWARE)) return wall;
+    // [ap] removed for autoexplore
+    //if (!(c_ptr->info & CAVE_AWARE)) return wall;
 
     /* Don't travel thru traps ... code will attempt a disarm, but this
      * can be dangerous for some players. Often, there is an alternate
@@ -4111,3 +4112,92 @@ void do_cmd_get_nearest(void)
     }
 }
 
+
+/*
+ * Explore previously unexplored locations automatically
+ */
+void do_cmd_explore(void)
+{
+    travel.num_valid_targets = 0;
+
+    int final_target_x = -1; 
+    int final_target_y = -1;
+
+    //msg_format("Player is at: %i %i", px, py);
+
+    // The desired maximum radial distance to search outwards from the player.
+    int desired_search_radius = 40; 
+
+    int search_min_y = py - desired_search_radius;
+    int search_max_y = py + desired_search_radius;
+    int search_min_x = px - desired_search_radius;
+    int search_max_x = px + desired_search_radius;
+
+    // Clamp the search boundaries to the actual map dimensions (cur_hgt, cur_wid).
+    if (search_min_y < 0) search_min_y = 0;
+    if (search_max_y >= cur_hgt) search_max_y = cur_hgt - 1;
+    if (search_min_x < 0) search_min_x = 0;
+    if (search_max_x >= cur_wid) search_max_x = cur_wid - 1;
+
+    for (int current_yy = search_min_y; current_yy <= search_max_y; current_yy++)
+    {
+        for (int current_xx = search_min_x; current_xx <= search_max_x; current_xx++)
+        {
+            cave_type *c_ptr = &cave[current_yy][current_xx];
+
+            // Check if the tile is NOT marked as explored.
+            //msg_format("Checking point %i %i", current_xx, current_yy);
+            if (!(c_ptr->info & CAVE_MARK)) 
+            {
+                s16b feat;
+                feature_type *f_ptr;
+                
+                feat = get_feat_mimic(c_ptr);
+                f_ptr = &f_info[feat];
+
+                if (!have_flag(f_ptr->flags, FF_WALL))
+                {
+                    if (travel.num_valid_targets < MAX_EXPLORE_POINTS)
+                    {
+                        travel.valid_targets[travel.num_valid_targets].x = current_xx;
+                        travel.valid_targets[travel.num_valid_targets].y = current_yy;
+                        travel.num_valid_targets++;
+                        //msg_format("Found potential target: %i %i", current_xx, current_yy);
+                    }
+                    else
+                    {
+                        // msg_print("Search capped: too many unexplored paths found.");
+                        goto search_complete; // Efficiently exit all outer loops.
+                    }
+                }
+            }
+        }
+    }
+
+search_complete:;
+
+    if (travel.num_valid_targets == 0)
+    {
+        msg_print("No unexplored path found within range."); 
+        return; // Exit the function as no travel target is available.
+    }
+
+    // Now, iterate through all the found valid targets to identify the one closest to the player.
+    int min_distance = INT_MAX; 
+
+    for (int i = 0; i < travel.num_valid_targets; i++)
+    {
+        int current_dist = distance(py, px, travel.valid_targets[i].y, travel.valid_targets[i].x);
+
+        if (current_dist < min_distance)
+        {
+            final_target_x = travel.valid_targets[i].x;
+            final_target_y = travel.valid_targets[i].y;
+            min_distance = current_dist;
+        }
+    }
+
+    travel.autoexpl = 1;
+    //msg_format("Travelling to %i %i",final_target_x, final_target_y);
+    travel_begin(TRAVEL_MODE_NORMAL, final_target_x, final_target_y);
+    }

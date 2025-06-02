@@ -1859,6 +1859,15 @@ typedef struct
     s16b num_jammed;
 } door_type;
 
+// Define a reasonable maximum number of points to store.
+// A 41x41 square (20 tiles in each direction from center) has 1681 tiles.
+// If all were valid, you'd need space. Adjust this based on memory constraints.
+#define MAX_EXPLORE_POINTS 2000 
+
+typedef struct Point {
+    int x;
+    int y;
+} Point;
 
 /*
  *  A structure type for travel command
@@ -1873,6 +1882,9 @@ typedef struct {
     int y;
     int dir;
     int mode;
+	int autoexpl;
+    Point valid_targets[MAX_EXPLORE_POINTS];
+    int num_valid_targets;
 } travel_type;
 
 typedef struct {

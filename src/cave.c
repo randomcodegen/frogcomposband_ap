@@ -5353,6 +5353,8 @@ void disturb(int stop_search, int unused_flag)
 
     if (travel.run)
     {
+		//msg_format("Disturb called while travelling.");
+        travel.num_valid_targets = 0;
         travel_cancel();
 
         /* Check for new panel if appropriate */

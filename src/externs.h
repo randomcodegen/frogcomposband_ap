@@ -873,6 +873,8 @@ extern void travel_cancel(void);
 extern void travel_cancel_fully(void);
 extern void travel_end(void);
 extern int breakage_chance(object_type *o_ptr);
+//[ap]
+extern void do_cmd_explore(void);
 
 /* cmd3.c */
 extern void do_cmd_drop(void);

@@ -6434,6 +6434,73 @@ static int travel_cost(point_t pt)
     return travel.cost[pt.y][pt.x];
 }
 
+int travel_deletePoint(int target_x, int target_y) {
+    int found_index = -1;
+
+    // 1. Find the index of the point to delete
+    for (int i = 0; i < travel.num_valid_targets; i++) {
+        if (travel.valid_targets[i].x == target_x && travel.valid_targets[i].y == target_y) {
+            found_index = i;
+            break; // Found it, no need to continue searching
+        }
+    }
+
+    // 2. If the point was found, shift elements
+    if (found_index != -1) {
+        // Shift all elements after the found_index one position to the left
+        for (int i = found_index; i < travel.num_valid_targets - 1; i++) {
+            travel.valid_targets[i] = travel.valid_targets[i + 1];
+        }
+        // Decrement the count of valid targets
+        (travel.num_valid_targets)--;
+        return 1; // Successfully deleted
+    } else {
+        return 0; // Point not found
+    }
+}
+
+int travel_autoexplore_continue (void)
+{
+    if (travel.autoexpl >= 1 && travel.autoexpl < travel.num_valid_targets) // We have a failure case, get new point and begin travel again
+    {
+        int x,y;
+        int final_target_x, final_target_y;
+        travel.autoexpl += 1;
+        //msg_format("After setting travel.run on fail : %i", travel.autoexpl);
+        int min_distance = INT_MAX; 
+
+        travel_deletePoint(travel.x, travel.y);
+
+        for (int i = 0; i < travel.num_valid_targets; i++)
+        {
+            // Calculate the distance from the player's current position (py, px)
+            // to the current valid target point using your `distance` function.
+            // This is done only for *found* valid targets, not every tile in the search area.
+            int current_dist = distance(py, px, travel.valid_targets[i].y, travel.valid_targets[i].x);
+        
+            // If this is the first target being considered, or if it's closer than the current closest, update.
+            if (current_dist < min_distance)
+            {
+                final_target_x = travel.valid_targets[i].x;
+                final_target_y = travel.valid_targets[i].y;
+                min_distance = current_dist;
+            }
+        }
+        //msg_format("Found new candidate: %i %i", final_target_x, final_target_y);
+        travel.run = 0;
+        travel.x = final_target_x;
+        travel.y = final_target_y;
+        travel_begin(TRAVEL_MODE_NORMAL, final_target_x, final_target_y);
+        return TRUE;
+    }
+    else
+    {
+        msg_print("No route is found!");
+        return FALSE;
+    }
+    return FALSE;
+}
+
 void travel_step(void)
 {
     int i;
@@ -6450,8 +6517,9 @@ void travel_step(void)
 
     if (travel_abort())
     {
-        if (travel.run == 255)
-            msg_print("No route is found!");
+        if (travel.run == 255 && travel.num_valid_targets > 0) {
+            if(travel_autoexplore_continue()) return;
+        }
         disturb(0, 0);
         return;
     }
@@ -6513,6 +6581,10 @@ void travel_step(void)
 
     if (((py == travel.y) && (px == travel.x)) || ((py == py_old)&&(px == px_old) && (!door_hack)) || (ongelma))
     {
+		//msg_format("Travel Reached goal without disturb");
+        if(travel_autoexplore_continue()) 
+            return;
+        else
         travel_end();
     }
     else
